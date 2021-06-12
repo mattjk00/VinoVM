@@ -26,4 +26,21 @@ impl Debugger {
             println!("{}: {:#x}", i, m.memory[i]);
         }
     }
+
+    pub fn print_str(mem:Vec<u64>, start:usize) {
+        let mut next = mem[start];
+        let mut i = start;
+        while next != 0 {
+            let c = char::from_u32(next as u32);
+            match c {
+                Some(ch) => print!("{}", ch),
+                None => print!("?")
+            };
+            
+            i += 1;
+            next = mem[i];
+            
+        }
+        println!();
+    }
 }

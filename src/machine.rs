@@ -58,6 +58,9 @@ impl Machine {
         else if opcode == DBG_LOG {
             Debugger::print(self.ac);
         }
+        else if opcode == DBG_STR {
+            Debugger::print_str(self.memory.clone(), self.ac as usize);
+        }
         else if opcode == QUIT {
             self.quit();
         }
@@ -87,7 +90,7 @@ impl Machine {
         for mut i in 0..ins.len() {
             let next = ins[i];
             skip = false;
-            
+
             if loading_i && next == QUIT {
                 loading_i = false;
                 skip = true;
