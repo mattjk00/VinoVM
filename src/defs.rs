@@ -1,0 +1,5 @@
+pub const IMASK:u64 = 0xFF00_0000_0000_0000;
+pub const PMASK:u64 = 0x00FF_FFFF_FFFF_FFFF;
+pub const LOADC:u64 = 0x1000_0000_0000_0000;
+
+pub const DBG_LOG:u64 = 0xFF00_0000_0000_0000;
