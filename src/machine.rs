@@ -1,5 +1,7 @@
 //mod defs;
-use crate::defs::*;
+use crate::defs::basic::*;
+use crate::defs::masks::*;
+use crate::defs::debug::*;
 //mod debugger;
 use crate::debugger::Debugger;
 

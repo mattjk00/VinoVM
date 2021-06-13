@@ -3,7 +3,9 @@ mod machine;
 mod defs;
 mod debugger;
 use machine::Machine;
-use defs::*;
+use crate::defs::basic::*;
+use crate::defs::masks::*;
+use crate::defs::debug::*;
 use debugger::Debugger;
 
 fn main() {
