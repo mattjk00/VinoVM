@@ -2,6 +2,7 @@
 use crate::defs::basic::*;
 use crate::defs::masks::*;
 use crate::defs::debug::*;
+use crate::defs::stack::*;
 //mod debugger;
 use crate::debugger::Debugger;
 
@@ -48,6 +49,8 @@ impl Machine {
         let instr = self.instructions[self.ir as usize];
         let opcode = instr & IMASK;
         let param = instr & PMASK;
+
+        // BASIC
         if opcode == LOADC {
             self.loadc(param);
         }
@@ -57,15 +60,26 @@ impl Machine {
         else if opcode == LOAD {
             self.load(param as usize);
         }
+        else if opcode == QUIT {
+            self.quit();
+        }
+
+        // STACK
+        else if opcode == PUSH {
+            self.push();
+        }
+        else if opcode == POP {
+            self.pop();
+        }
+
+        // DEBUG
         else if opcode == DBG_LOG {
             Debugger::print(self.ac);
         }
         else if opcode == DBG_STR {
             Debugger::print_str(self.memory.clone(), self.ac as usize);
         }
-        else if opcode == QUIT {
-            self.quit();
-        }
+        
         
         if self.running {
             self.incr();
@@ -82,6 +96,20 @@ impl Machine {
     
     fn load(&mut self, addr:usize) {
         self.ac = self.memory[addr];
+    }
+
+    fn push(&mut self) {
+        self.stack.push(self.ac);
+        self.sp += 1;
+    }
+
+    fn pop(&mut self) {
+        let popvalue = self.stack.pop();
+        match popvalue {
+            Some(v) => self.ac = v,
+            None => println!("ERROR")
+        };
+        self.sp -= 1;
     }
 
     pub fn load_instructions(&mut self, mut ins:Vec<u64>) {
