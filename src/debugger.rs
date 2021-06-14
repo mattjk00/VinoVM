@@ -4,7 +4,7 @@ use crate::machine::Machine;
 pub struct Debugger;
 
 impl Debugger {
-    pub fn print(v:u64) {
+    pub fn print(v:i64) {
         println!("vn: {}\t{:#x}\t{:#b}", v, v, v);
     }
     pub fn print_ac(m:Machine) {
@@ -27,11 +27,14 @@ impl Debugger {
         }
     }
 
-    pub fn print_str(mem:Vec<u64>, start:usize) {
+    pub fn print_str(mem:Vec<i64>, start:usize) {
+        
         let mut next = mem[start];
         let mut i = start;
+
         while next != 0 {
             let c = char::from_u32(next as u32);
+            
             match c {
                 Some(ch) => print!("{}", ch),
                 None => print!("?")

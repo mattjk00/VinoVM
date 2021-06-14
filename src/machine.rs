@@ -3,19 +3,21 @@ use crate::defs::basic::*;
 use crate::defs::masks::*;
 use crate::defs::debug::*;
 use crate::defs::stack::*;
+use crate::defs::math::*;
+use crate::defs::jumps::*;
 //mod debugger;
 use crate::debugger::Debugger;
 
 pub struct Machine {
     pub ir:     u64,
-    pub ac:     u64,
-    pub mdr:    u64,
+    pub ac:     i64,
+    pub mdr:    i64,
     pub mar:    u64,
     pub sp:     u64,
 
-    pub memory:         Vec<u64>,
-    pub instructions:   Vec<u64>,
-    pub stack:          Vec<u64>,
+    pub memory:         Vec<i64>,
+    pub instructions:   Vec<i64>,
+    pub stack:          Vec<i64>,
 
     pub running:bool
 }
@@ -72,6 +74,31 @@ impl Machine {
             self.pop();
         }
 
+        // MATH
+        else if opcode == ADD {
+            self.add(param);
+        }
+        else if opcode == SUB {
+            self.sub(param);
+        }
+        else if opcode == MULT {
+            self.mult(param);
+        }
+        else if opcode == DIV {
+            self.div(param);
+        }
+
+        // JUMPS
+        else if opcode == JA {
+            self.jump_always(param as u64);
+        }
+        else if opcode == JZ {
+            self.jump_zero(param as u64);
+        }
+        else if opcode == JN {
+            self.jump_negative(param as u64);
+        }
+
         // DEBUG
         else if opcode == DBG_LOG {
             Debugger::print(self.ac);
@@ -90,7 +117,7 @@ impl Machine {
         self.memory[addr] = self.ac;
     }
 
-    fn loadc(&mut self, param:u64) {
+    fn loadc(&mut self, param:i64) {
         self.ac = param;
     }
     
@@ -112,12 +139,44 @@ impl Machine {
         self.sp -= 1;
     }
 
-    pub fn load_instructions(&mut self, mut ins:Vec<u64>) {
+    fn add(&mut self, param:i64) {
+        self.ac = self.ac + param;
+    }
+
+    fn sub(&mut self, param:i64) {
+        self.ac = self.ac - param;
+    }
+
+    fn mult(&mut self, param:i64) {
+        self.ac = self.ac * param;
+    }
+
+    fn div(&mut self, param:i64) {
+        self.ac = self.ac / param;
+    }
+
+    fn jump_always(&mut self, param:u64) {
+        self.ir = param - 1;
+    }
+
+    fn jump_zero(&mut self, param:u64) {
+        if self.ac == 0 {
+            self.ir = param - 1;
+        }
+    }
+
+    fn jump_negative(&mut self, param:u64) {
+        if self.ac < 0 {
+            self.ir = param - 1;
+        }
+    }
+
+    pub fn load_instructions(&mut self, ins:Vec<i64>) {
         
         let mut loading_i = true;
         let mut memindex = 0;
-        let mut skip = false;
-        for mut i in 0..ins.len() {
+        let mut skip;
+        for i in 0..ins.len() {
             let next = ins[i];
             skip = false;
 
