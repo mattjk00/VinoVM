@@ -28,6 +28,8 @@ pub mod funcs {
     pub const RETURN:i64 =  0x4100_0000;
 }
 
+// Math Operations are stack based.
+// (EX) ADD -> AC = Stack Pop + AC
 pub mod math {
     pub const ADD:i64 =     0x5000_0000;
     pub const MULT:i64 =    0x5100_0000;

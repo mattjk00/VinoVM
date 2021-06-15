@@ -84,16 +84,16 @@ impl Machine {
 
         // MATH
         else if opcode == ADD {
-            self.add(param);
+            self.add();
         }
         else if opcode == SUB {
-            self.sub(param);
+            self.sub();
         }
         else if opcode == MULT {
-            self.mult(param);
+            self.mult();
         }
         else if opcode == DIV {
-            self.div(param);
+            self.div();
         }
 
         // JUMPS
@@ -158,19 +158,27 @@ impl Machine {
         self.sp -= 1;
     }
 
-    fn add(&mut self, param:i64) {
+    fn add(&mut self) {
+        let param = self.ac;
+        self.pop();
         self.ac = self.ac + param;
     }
 
-    fn sub(&mut self, param:i64) {
+    fn sub(&mut self) {
+        let param = self.ac;
+        self.pop();
         self.ac = self.ac - param;
     }
 
-    fn mult(&mut self, param:i64) {
+    fn mult(&mut self) {
+        let param = self.ac;
+        self.pop();
         self.ac = self.ac * param;
     }
 
-    fn div(&mut self, param:i64) {
+    fn div(&mut self) {
+        let param = self.ac;
+        self.pop();
         self.ac = self.ac / param;
     }
 
@@ -231,6 +239,8 @@ impl Machine {
                 memindex += 1;
             }
         }
+
+        self.vmprint(format!("Loaded {} words into {} instructions and {} starting memory slots.", ins.len(), self.instructions.len(), memindex));
     }
 
     fn stop(&mut self) {

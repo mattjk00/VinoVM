@@ -11,6 +11,7 @@ use crate::defs::math::*;
 use crate::defs::jumps::*;
 use crate::defs::funcs::*;
 use debugger::Debugger;
+use std::time::{Duration, Instant};
 
 fn main() {
     let mut machine = Machine::new_instance(256, 256, 256);
@@ -39,8 +40,8 @@ fn main() {
         DBG_LOG,
         STOP,
         //
-        POP,
-        ADD + 4,
+        LOADC + 5,
+        SUB,
         STORE,
         RETURN,
 
@@ -52,9 +53,13 @@ fn main() {
         QUIT,
         0
     ];
+    
+    let now = Instant::now();
+
     machine.load_instructions(is);
-    //machine.trace = true;
+    
     machine.start();
+    println!("Completed in {} seconds.", now.elapsed().as_secs_f32());
 
     //Debugger::print_instructions(machine);
     //Debugger::print_memory_range(machine, 0, 5);
