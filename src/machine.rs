@@ -5,6 +5,7 @@ use crate::defs::debug::*;
 use crate::defs::stack::*;
 use crate::defs::math::*;
 use crate::defs::jumps::*;
+use crate::defs::funcs::*;
 //mod debugger;
 use crate::debugger::Debugger;
 
@@ -15,19 +16,21 @@ pub struct Machine {
     pub mar:    u64,
     pub sp:     u64,
 
+    pub rr:             Vec<u64>,
     pub memory:         Vec<i64>,
     pub instructions:   Vec<i64>,
     pub stack:          Vec<i64>,
 
-    pub running:bool
+    pub running:bool,
+    pub trace:  bool
 }
 
 impl Machine {
     pub fn new_instance(mem_size:usize, ins_size:usize, stack_size:usize) -> Machine {
         Machine { 
-            ir:0, mdr:0, mar:0, sp:0, ac:0,
+            ir:0, mdr:0, mar:0, sp:0, ac:0, rr:Vec::with_capacity(stack_size),
             memory:vec![0; mem_size], instructions:Vec::with_capacity(ins_size), stack:Vec::with_capacity(stack_size),
-            running:false
+            running:false, trace:false
         }
     }
 
@@ -52,6 +55,8 @@ impl Machine {
         let opcode = instr & IMASK;
         let param = instr & PMASK;
 
+        self.vmprint(format!("{:x}", instr));
+
         // BASIC
         if opcode == LOADC {
             self.loadc(param);
@@ -64,6 +69,9 @@ impl Machine {
         }
         else if opcode == QUIT {
             self.quit();
+        }
+        else if opcode == STOP {
+            self.stop();
         }
 
         // STACK
@@ -97,6 +105,17 @@ impl Machine {
         }
         else if opcode == JN {
             self.jump_negative(param as u64);
+        }
+        else if opcode == JP {
+            self.jump_positive(param as u64);
+        }
+
+        // Functions
+        else if opcode == CALL {
+            self.call(param as u64);
+        }
+        else if opcode == RETURN {
+            self.ret();
         }
 
         // DEBUG
@@ -134,7 +153,7 @@ impl Machine {
         let popvalue = self.stack.pop();
         match popvalue {
             Some(v) => self.ac = v,
-            None => println!("ERROR")
+            None => println!("Stack Error!")
         };
         self.sp -= 1;
     }
@@ -171,6 +190,26 @@ impl Machine {
         }
     }
 
+    fn jump_positive(&mut self, param:u64) {
+        if self.ac > 0 {
+            self.ir = param - 1;
+        }
+    }
+
+    fn call(&mut self, addr:u64) {
+        self.rr.push(self.ir as u64);
+        self.ir = addr - 1;
+    }
+
+    fn ret(&mut self) {
+        //self.ir = self.rr;
+        let radr = self.rr.pop();
+        match radr {
+            Some(r) => self.ir = r,
+            None => { println!("Return Error! Can't find home :("); self.quit(); }
+        };
+    }
+
     pub fn load_instructions(&mut self, ins:Vec<i64>) {
         
         let mut loading_i = true;
@@ -194,8 +233,20 @@ impl Machine {
         }
     }
 
+    fn stop(&mut self) {
+        self.running = false;
+        
+        self.vmprint(String::from("Bytecode Stopped."));
+    }
+
     pub fn quit(&mut self) {
         self.running = false;
-        println!("VM Exit!");
+        self.vmprint(String::from("VM Exit!"));
+    }
+
+    fn vmprint(&self, msg:String) {
+        if self.trace {
+            println!("{}", msg);
+        }
     }
 }

@@ -5,7 +5,7 @@ pub struct Debugger;
 
 impl Debugger {
     pub fn print(v:i64) {
-        println!("vn: {}\t{:#x}\t{:#b}", v, v, v);
+        println!("vn> {}\t{:#x}", v, v);
     }
     pub fn print_ac(m:Machine) {
         println!("{}", m.ac);

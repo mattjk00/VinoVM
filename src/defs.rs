@@ -7,7 +7,8 @@ pub mod basic {
     pub const LOADC:i64 =   0x1000_0000;
     pub const STORE:i64 =   0x1100_0000;
     pub const LOAD:i64 =    0x1200_0000;
-    pub const QUIT:i64 =    0xFF00_0000;
+    pub const QUIT:i64 =    0xFF00_0000; // Quits the VM
+    pub const STOP:i64 =    0xFE00_0000; // Tells VM to stop executing bytecode instrucitons. Put function defs etc. after STOP.
 }
 
 pub mod stack {
