@@ -27,6 +27,13 @@ impl Debugger {
         }
     }
 
+    pub fn print_stack_vars(m:Machine) {
+        println!("Stack Table -- size: {}", m.stack_table.len());
+        for i in 0..m.stack_table.len() {
+            println!("{:#x}: {:#x}", m.stack_table[i], m.stack[m.stack_table[i] as usize]);
+        }
+    }
+
     pub fn print_str(mem:Vec<i64>, start:usize) {
         
         let mut next = mem[start];

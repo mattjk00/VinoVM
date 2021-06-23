@@ -12,8 +12,11 @@ pub mod basic {
 }
 
 pub mod stack {
-    pub const PUSH:i64 =    0x2000_0000;
-    pub const POP:i64 =     0x2100_0000;
+    pub const PUSH:i64 =        0x2000_0000;
+    pub const POP:i64 =         0x2100_0000;
+    pub const PUSH_TABLE:i64 =  0x2200_0000;
+    pub const LOAD_TABLE:i64 =  0x2300_0000;
+    pub const STORE_TABLE:i64 = 0x2400_0000;
 }
 
 pub mod jumps {

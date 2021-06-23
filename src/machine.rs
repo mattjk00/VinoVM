@@ -20,6 +20,7 @@ pub struct Machine {
     pub memory:         Vec<i64>,
     pub instructions:   Vec<i64>,
     pub stack:          Vec<i64>,
+    pub stack_table:    Vec<i64>,
 
     pub running:bool,
     pub trace:  bool
@@ -30,6 +31,7 @@ impl Machine {
         Machine { 
             ir:0, mdr:0, mar:0, sp:0, ac:0, rr:Vec::with_capacity(stack_size),
             memory:vec![0; mem_size], instructions:Vec::with_capacity(ins_size), stack:Vec::with_capacity(stack_size),
+            stack_table:Vec::with_capacity(stack_size),
             running:false, trace:false
         }
     }
@@ -81,6 +83,15 @@ impl Machine {
         else if opcode == POP {
             self.pop();
         }
+        else if opcode == PUSH_TABLE {
+            self.push_table();
+        }
+        else if opcode == LOAD_TABLE {
+            self.load_table(param as usize);
+        }
+        else if opcode == STORE_TABLE {
+            self.store_table(param as usize);
+        }
 
         // MATH
         else if opcode == ADD {
@@ -125,7 +136,9 @@ impl Machine {
         else if opcode == DBG_STR {
             Debugger::print_str(self.memory.clone(), self.ac as usize);
         }
-        
+        else {
+            println!("Invalid Bytecode: {:#x}", opcode);
+        }
         
         if self.running {
             self.incr();
@@ -156,6 +169,20 @@ impl Machine {
             None => println!("Stack Error!")
         };
         self.sp -= 1;
+    }
+
+    fn push_table(&mut self) {
+        self.stack.push(self.ac);
+        self.stack_table.push((self.stack.len()-1) as i64);
+    }
+
+    fn load_table(&mut self, addr:usize) {
+        let val = self.stack[self.stack_table[addr] as usize];
+        self.ac = val;
+    }
+
+    fn store_table(&mut self, addr:usize) {
+        self.stack[self.stack_table[addr] as usize] = self.ac;
     }
 
     fn add(&mut self) {
