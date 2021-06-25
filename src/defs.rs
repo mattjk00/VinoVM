@@ -38,6 +38,9 @@ pub mod math {
     pub const MULT:i64 =    0x5100_0000;
     pub const SUB:i64 =     0x5200_0000;
     pub const DIV:i64 =     0x5300_0000;
+    pub const EQUAL:i64 =   0x5400_0000;
+    pub const LTHAN:i64 =   0x5500_0000;
+    pub const GTHAN:i64 =   0x5600_0000;
 }
 
 pub mod debug {

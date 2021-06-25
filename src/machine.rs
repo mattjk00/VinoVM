@@ -106,6 +106,15 @@ impl Machine {
         else if opcode == DIV {
             self.div();
         }
+        else if opcode == EQUAL {
+            self.equal();
+        }
+        else if opcode == LTHAN {
+            self.less_than();
+        }
+        else if opcode == GTHAN {
+            self.greater_than();
+        }
 
         // JUMPS
         else if opcode == JA {
@@ -207,6 +216,24 @@ impl Machine {
         let param = self.ac;
         self.pop();
         self.ac = self.ac / param;
+    }
+
+    fn equal(&mut self) {
+        let param = self.ac;
+        self.pop();
+        self.ac = (self.ac == param) as i64;
+    }
+
+    fn less_than(&mut self) {
+        let param = self.ac;
+        self.pop();
+        self.ac = (self.ac < param) as i64;
+    }
+
+    fn greater_than(&mut self) {
+        let param = self.ac;
+        self.pop();
+        self.ac = (self.ac > param) as i64;
     }
 
     fn jump_always(&mut self, param:u64) {
