@@ -75,11 +75,11 @@ fn main() -> io::Result<()> {
     let now = Instant::now();
 
     machine.load_instructions(is);
-    //machine.trace = true;
+    machine.trace = true;
     machine.start();
     println!("Completed in {} seconds.", now.elapsed().as_secs_f32());
     //Debugger::print_instructions(machine);
-    //Debugger::print_stack_vars(machine);
+    Debugger::print_stack_vars(machine);
     
     Ok(())
 
